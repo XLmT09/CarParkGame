@@ -4,8 +4,9 @@ import os
 WIDTH, HEIGHT = 1000, 500
 ROAD_WIDTH, ROAD_HEIGHT = 100, 200
 PARK_WIDTH, PARK_HEIGHT = 75, 150
-LIGHT_GREEN = (68, 255, 0)
 BLACK = (0, 0, 0)
+BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "grass.jpg")), 
+    (WIDTH, HEIGHT))
 
 
 ROAD = pygame.image.load(os.path.join("assets", "road.png"))
@@ -22,21 +23,18 @@ BOUNDARY_FIVE = pygame.Rect(799, 125, 1, ROAD_WIDTH + PARK_WIDTH)
 BOUNDARY_SIX = pygame.Rect(650, 125, PARK_HEIGHT, 1)
 BOUNDARY_SEVEN = pygame.Rect(650, 125, 1, PARK_WIDTH)
 
+boundaries = [BOUNDARY_ONE, BOUNDARY_TWO, BOUNDARY_THREE, BOUNDARY_FOUR, BOUNDARY_FIVE, BOUNDARY_SIX, BOUNDARY_SEVEN]
+
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def draw():
-    pygame.display.update()
-    WIN.fill(LIGHT_GREEN)
+    WIN.blit(BACKGROUND, (0, 0))
     WIN.blit(ROAD_ONE, (200 , HEIGHT - ROAD_HEIGHT))
     WIN.blit(ROAD_TWO, (200 , HEIGHT - ROAD_WIDTH - ROAD_HEIGHT))
     WIN.blit(PARK, (650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH))
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_ONE)
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_TWO)
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_THREE)
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_FOUR)
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_FIVE)
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_SIX)
-    pygame.draw.rect(WIN, BLACK, BOUNDARY_SEVEN)
+    for bound in boundaries:
+        pygame.draw.rect(WIN, BLACK, bound)
+    pygame.display.update()
 
 def main():
     run = True
