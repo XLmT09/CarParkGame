@@ -1,4 +1,4 @@
-import pygame, os
+import pygame, os, button
 WIDTH, HEIGHT = 1000, 500
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -27,33 +27,8 @@ BOUNDARY_SEVEN = pygame.Rect(650, 125, 1, PARK_WIDTH)
 
 boundaries = [BOUNDARY_ONE, BOUNDARY_TWO, BOUNDARY_THREE, BOUNDARY_FOUR, BOUNDARY_FIVE, BOUNDARY_SIX, BOUNDARY_SEVEN]
 
-class Button:
-    def __init__(self, x, y, image, scale):
-        width = image.get_width()
-        height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
-        self.clicked = False
-
-    def draw(self):
-        action = False
-        pos = pygame.mouse.get_pos()
-
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                action = True
-        
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
-
-        WIN.blit(self.image, (self.rect.x, self.rect.y))
-
-        return action
-
-start_btn = Button(350, 100, START_IMG, 1)
-quit_btn = Button(350, 250, QUIT_IMG, 1)
+start_btn = button.Button(350, 100, START_IMG, 1)
+quit_btn = button.Button(350, 250, QUIT_IMG, 1)
 
 def draw_level_one():
     run = True
@@ -76,10 +51,12 @@ def main_menu():
     run = True
     while run:
         WIN.fill((255, 255, 0))
-        if start_btn.draw():
+
+        if start_btn.draw(WIN):
             draw_level_one()
-        if quit_btn.draw():
-            print("quit")
+        if quit_btn.draw(WIN):
+            run = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
