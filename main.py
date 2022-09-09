@@ -7,6 +7,7 @@ FPS = 60
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 ROAD_WIDTH, ROAD_HEIGHT = 100, 200
 PARK_WIDTH, PARK_HEIGHT = 75, 150
@@ -36,12 +37,24 @@ quit_btn_lose_screen = button.Button(250, 300, QUIT_IMG, 1)
 quit2_btn = button.Button(0, 0, QUIT2_IMG, 0.05)
 reset_btn = button.Button(550, 300, RESET_IMG, 1)
 
-def lose_screen():
-    text = font.render('Game Over', True, WHITE, RED)
+def check_car_in_parking_space(car, p):
+    #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top} \n park: {p.left, p.right, p.bottom, p.top}")
+    if car.rect.top < p.right and car.rect.left > p.top and car.rect.bottom > p.left and car.rect.right < p.bottom:
+        return True    
+            
+
+def end_screen(did_user_win):
+    if did_user_win == False:
+        text = font.render('Game Over', True, WHITE, RED)
+    else:
+        text = font.render('Game Complete!', True, WHITE, GREEN)
     textRect = text.get_rect()
     textRect.center = (WIDTH // 2, HEIGHT // 3)
     while True:
-        WIN.fill((255, 10, 10))
+        if did_user_win == False:
+            WIN.fill(RED)
+        else:
+            WIN.fill(GREEN)
         WIN.blit(text, textRect)
 
         if reset_btn.draw(WIN):
@@ -67,23 +80,26 @@ def draw_level_one():
         WIN.blit(BACKGROUND, (0, 0))
         WIN.blit(ROAD_ONE, (200 , HEIGHT - ROAD_HEIGHT))
         WIN.blit(ROAD_TWO, (200 , HEIGHT - ROAD_WIDTH - ROAD_HEIGHT))
-        WIN.blit(PARK, (650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH))
+        #WIN.blit(PARK, (650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH))
+        p = pygame.Rect(650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH, PARK_WIDTH, PARK_HEIGHT)
+        WIN.blit(PARK, (p.x, p.y))
         player_list.draw(WIN)
         car.move()
         
         for bound in objects.lvl1_boundaries:
             pygame.draw.rect(WIN, BLACK, bound)
             if(bound.colliderect(car)):
-                lose_screen()
-
+                end_screen(False)
+            
         if quit2_btn.draw(WIN):
             main_menu()
-        
+        if check_car_in_parking_space(car, p):
+            end_screen(True)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        
+
         pygame.display.update()
 
 def main_menu():
