@@ -17,6 +17,7 @@ class PlayerCar:
         self.x, self.y = start_pos
         self.acceleration = 0.1 
 
+    #car drawing updates here
     def draw(self,win):
         rotated_img = pygame.transform.rotate(self.img, self.angle)
         self.rect = rotated_img.get_rect(center=self.img.get_rect(topleft = (self.x, self.y)).center)
