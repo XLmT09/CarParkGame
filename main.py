@@ -80,7 +80,7 @@ def end_screen(did_user_win):
         pygame.display.update()
 
 def draw_level_two():
-    car = carMechanics.PlayerCar(250, 400, 1)   
+    car = carMechanics.PlayerCar(250, 400, 1, 5)   
     player_list = pygame.sprite.Group()
     player_list.add(car)
     while True:
@@ -111,9 +111,7 @@ def draw_level_two():
 
 def draw_level_one():
     #Creating car object
-    car = carMechanics.PlayerCar(250, 400, 1)   
-    player_list = pygame.sprite.Group()
-    player_list.add(car)
+    car = carMechanics.PlayerCar((250, 400))   
     while True:
         clock.tick(FPS)
         WIN.blit(BACKGROUND, (0, 0))
@@ -123,8 +121,7 @@ def draw_level_one():
         p = pygame.Rect(650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH, PARK_WIDTH, PARK_HEIGHT)
         WIN.blit(PARK_HORIZONTAL, (p.x, p.y))
         #draw car
-        player_list.draw(WIN)
-        car.move()
+        car.move_player(WIN)
         
         for bound in objects.lvl1_boundaries:
             pygame.draw.rect(WIN, BLACK, bound)
@@ -150,7 +147,7 @@ def main_menu():
         WIN.fill((153, 204, 255))
 
         if start_btn.draw(WIN):
-            draw_level_two()
+            draw_level_one()
         if quit_btn.draw(WIN):
             run = False
 
