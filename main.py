@@ -45,7 +45,7 @@ quit2_btn = button.Button(0, 0, QUIT2_IMG, 0.05)
 reset_btn = button.Button(550, 300, RESET_IMG, 1)
 
 def check_car_in_parking_space(car, left, right, bottom, top):
-    #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top} park: {p.left, p.right, p.bottom, p.top}")
+    #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top}")
     if car.rect.left > left and car.rect.right < right and car.rect.bottom < bottom and car.rect.top > top:
         return True    
             
@@ -80,27 +80,30 @@ def end_screen(did_user_win):
         pygame.display.update()
 
 def draw_level_two():
-    car = carMechanics.PlayerCar(250, 400, 1, 5)   
-    player_list = pygame.sprite.Group()
-    player_list.add(car)
+    #Creating car object
+    car = carMechanics.PlayerCar((235, 75))
+    
     while True:
         clock.tick(FPS)
         WIN.blit(BACKGROUND, (0, 0))
         WIN.blit(ROAD_TWO, (200 , HEIGHT - ROAD_WIDTH - ROAD_HEIGHT))
+        WIN.blit(ROAD_ONE, (200 , 50))
         p = pygame.Rect(725, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_HEIGHT, PARK_WIDTH, PARK_HEIGHT)
         WIN.blit(PARK_VERTICAL, (p.x, p.y))
 
         for bound in objects.lvl2_boundaries:
             pygame.draw.rect(WIN, BLACK, bound)
-            #if(bound.colliderect(car)):
-            #    end_screen(False)
+            if(bound.colliderect(car)):
+                end_screen(False)
         
         #draw car
-        player_list.draw(WIN)
-        car.move()
+        car.move_player(WIN)
 
         if quit2_btn.draw(WIN):
             main_menu()
+
+        if check_car_in_parking_space(car, 725, 800, 200, 50):
+            end_screen(True)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -117,9 +120,9 @@ def draw_level_one():
         WIN.blit(BACKGROUND, (0, 0))
         WIN.blit(ROAD_ONE, (200 , HEIGHT - ROAD_HEIGHT))
         WIN.blit(ROAD_TWO, (200 , HEIGHT - ROAD_WIDTH - ROAD_HEIGHT))
-        #WIN.blit(PARK, (650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH))
         park_rect = pygame.Rect(650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH, PARK_WIDTH, PARK_HEIGHT)
         WIN.blit(PARK_HORIZONTAL, (park_rect.x, park_rect.y))
+       
         #draw car
         car.move_player(WIN)
         
@@ -131,9 +134,8 @@ def draw_level_one():
         if quit2_btn.draw(WIN):
             main_menu()
 
-        if check_car_in_parking_space(car, 650, 800, 200, 130, park_rect):
-            print("true")
-            end_screen(True)
+        if check_car_in_parking_space(car, 650, 800, 200, 130):
+            draw_level_two()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
