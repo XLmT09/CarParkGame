@@ -1,7 +1,15 @@
 import pygame, os, button, objects, sys, carMechanics
+
 pygame.init()
+clock = pygame.time.Clock()
+font = pygame.font.Font('freesansbold.ttf', 100)
+
 WIDTH, HEIGHT = 1000, 500
+ROAD_WIDTH, ROAD_HEIGHT = 100, 200
+PARK_WIDTH, PARK_HEIGHT = 75, 150
+
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+
 FPS = 60
 
 WHITE = (255, 255, 255)
@@ -9,20 +17,19 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
-ROAD_WIDTH, ROAD_HEIGHT = 100, 200
-PARK_WIDTH, PARK_HEIGHT = 75, 150
-
 #getting images for game
 BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "grass.jpg")), 
     (WIDTH, HEIGHT))
-ROAD = pygame.image.load(os.path.join("assets", "road.png"))
-PARK = pygame.transform.rotate(pygame.transform.scale(
+
+PARK_HORIZONTAL = pygame.transform.rotate(pygame.transform.scale(
     pygame.image.load(os.path.join("assets", "park.png")), (PARK_WIDTH, PARK_HEIGHT)), 90)
+
+PARK_VERTICAL = pygame.transform.scale(
+    pygame.image.load(os.path.join("assets", "park.png")), (PARK_WIDTH, PARK_HEIGHT))
+
+ROAD = pygame.image.load(os.path.join("assets", "road.png"))
 ROAD_ONE = pygame.transform.scale(ROAD ,(ROAD_WIDTH, ROAD_HEIGHT))
 ROAD_TWO = pygame.transform.rotate(pygame.transform.scale(ROAD ,(ROAD_WIDTH, ROAD_HEIGHT * 3)), 90)
-
-clock = pygame.time.Clock()
-font = pygame.font.Font('freesansbold.ttf', 100)
 
 #Buttons==========================================================
 #Getting button images
@@ -37,19 +44,21 @@ quit_btn_lose_screen = button.Button(250, 300, QUIT_IMG, 1)
 quit2_btn = button.Button(0, 0, QUIT2_IMG, 0.05)
 reset_btn = button.Button(550, 300, RESET_IMG, 1)
 
-def check_car_in_parking_space(car, p):
+def check_car_in_parking_space(car, parking):
     #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top} \n park: {p.left, p.right, p.bottom, p.top}")
-    if car.rect.top < p.right and car.rect.left > p.top and car.rect.bottom > p.left and car.rect.right < p.bottom:
+    if car.rect.top < parking.right and car.rect.left > parking.top and car.rect.bottom > parking.left and car.rect.right < parking.bottom:
         return True    
             
 
 def end_screen(did_user_win):
+    #creating text object
     if did_user_win == False:
         text = font.render('Game Over', True, WHITE, RED)
     else:
         text = font.render('Game Complete!', True, WHITE, GREEN)
     textRect = text.get_rect()
     textRect.center = (WIDTH // 2, HEIGHT // 3)
+
     while True:
         if did_user_win == False:
             WIN.fill(RED)
@@ -70,6 +79,36 @@ def end_screen(did_user_win):
         
         pygame.display.update()
 
+def draw_level_two():
+    car = carMechanics.PlayerCar(250, 400, 1)   
+    player_list = pygame.sprite.Group()
+    player_list.add(car)
+    while True:
+        clock.tick(FPS)
+        WIN.blit(BACKGROUND, (0, 0))
+        WIN.blit(ROAD_TWO, (200 , HEIGHT - ROAD_WIDTH - ROAD_HEIGHT))
+        p = pygame.Rect(725, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_HEIGHT, PARK_WIDTH, PARK_HEIGHT)
+        WIN.blit(PARK_VERTICAL, (p.x, p.y))
+
+        for bound in objects.lvl2_boundaries:
+            pygame.draw.rect(WIN, BLACK, bound)
+            #if(bound.colliderect(car)):
+            #    end_screen(False)
+        
+        #draw car
+        player_list.draw(WIN)
+        car.move()
+
+        if quit2_btn.draw(WIN):
+            main_menu()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        pygame.display.update()
+
 def draw_level_one():
     #Creating car object
     car = carMechanics.PlayerCar(250, 400, 1)   
@@ -82,7 +121,8 @@ def draw_level_one():
         WIN.blit(ROAD_TWO, (200 , HEIGHT - ROAD_WIDTH - ROAD_HEIGHT))
         #WIN.blit(PARK, (650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH))
         p = pygame.Rect(650, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_WIDTH, PARK_WIDTH, PARK_HEIGHT)
-        WIN.blit(PARK, (p.x, p.y))
+        WIN.blit(PARK_HORIZONTAL, (p.x, p.y))
+        #draw car
         player_list.draw(WIN)
         car.move()
         
@@ -93,8 +133,10 @@ def draw_level_one():
             
         if quit2_btn.draw(WIN):
             main_menu()
+
         if check_car_in_parking_space(car, p):
             end_screen(True)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -108,7 +150,7 @@ def main_menu():
         WIN.fill((153, 204, 255))
 
         if start_btn.draw(WIN):
-            draw_level_one()
+            draw_level_two()
         if quit_btn.draw(WIN):
             run = False
 
