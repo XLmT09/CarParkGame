@@ -8,6 +8,9 @@ class PlayerCar:
     def __init__(self, start_pos):
         self.img = scale_image(pygame.image.load(os.path.join('assets', 'GreenCar.png')),0.08)
         self.rect = self.img.get_rect()
+
+        self.mask = pygame.mask.from_surface(self.img)
+
         self.max_vel = 4
         self.vel = 0
         self.rotation_vel = 4
@@ -32,6 +35,11 @@ class PlayerCar:
         self.vel = max(self.vel - self.acceleration , 0)
         self.move()
 
+    def collide(self, mask, x=0, y=0):
+        car_mask = pygame.mask.from_surface(self.img)
+        offset = (int(self.x-x),int(self.y-y))
+        collisionIntersect = mask.overlap(car_mask, offset)
+        return collisionIntersect
     def move_player(self, win):
         self.draw(win)
         keys = pygame.key.get_pressed()

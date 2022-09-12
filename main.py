@@ -45,7 +45,7 @@ quit2_btn = button.Button(0, 0, QUIT2_IMG, 0.05)
 reset_btn = button.Button(550, 300, RESET_IMG, 1)
 
 def check_car_in_parking_space(car, left, right, bottom, top):
-    #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top}")
+    #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom,   car.rect.top}")
     if car.rect.left > left and car.rect.right < right and car.rect.bottom < bottom and car.rect.top > top:
         return True    
             
