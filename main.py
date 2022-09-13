@@ -22,7 +22,11 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 SKY_BLUE = (153, 204, 255)
 
+
+
+
 #getting images for game
+BACKGROUND_ONE = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Level1.png")).convert(), (WIDTH, HEIGHT))
 BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "grass.jpg")), 
     (WIDTH, HEIGHT))
 
@@ -129,11 +133,8 @@ def draw_level_two():
         p = pygame.Rect(725, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_HEIGHT, PARK_WIDTH, PARK_HEIGHT)
         WIN.blit(PARK_VERTICAL, (p.x, p.y))
 
-        for bound in objects.lvl2_boundaries:
-            pygame.draw.rect(WIN, BLACK, bound)
-            if(bound.colliderect(car)):
-                end_screen(False)
-        
+       
+         
         #draw car
         car.move_player(WIN)
 
@@ -155,15 +156,15 @@ def draw_level_one():
     car = carMechanics.PlayerCar((150, 400))   
     while True:
         clock.tick(FPS)
-        WIN.blit(objects.BACKGROUND_ONE, (0, 0))
+        WIN.blit(BACKGROUND_ONE, (0, 0))
+        WIN.blit(objects.BACKGROUND_ONE_OUTLINE, (0, 0))
 
         #draw car
         car.move_player(WIN)
         
-        for bound in objects.lvl1_boundaries:
-            pygame.draw.rect(WIN, BLACK, bound)
-            if(bound.colliderect(car)):
-                end_screen(False)
+         
+        if car.collide(objects.BACKGROUND_ONE_MASK) !=None:
+            end_screen(False)
 
         if quit2_btn.draw(WIN):
             main_menu()
