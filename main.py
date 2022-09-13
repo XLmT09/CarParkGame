@@ -21,9 +21,6 @@ GREEN = (0, 255, 0)
 BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "grass.jpg")), 
     (WIDTH, HEIGHT))
 
-PARK_HORIZONTAL = pygame.transform.rotate(pygame.transform.scale(
-    pygame.image.load(os.path.join("assets", "park.png")), (PARK_WIDTH, PARK_HEIGHT)), 90)
-
 PARK_VERTICAL = pygame.transform.scale(
     pygame.image.load(os.path.join("assets", "park.png")), (PARK_WIDTH, PARK_HEIGHT))
 
