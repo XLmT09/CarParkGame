@@ -1,10 +1,12 @@
-import pygame, os, button, objects, sys, carMechanics, time
+import pygame, os, button, objects, sys, carMechanics
 
 pygame.init()
 clock = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 100)
 leader_title_font = pygame.font.Font('freesansbold.ttf', 50)
 leader_small_font = pygame.font.Font('freesansbold.ttf', 20)
+start_time = 0
+end_time = 0
 
 WIDTH, HEIGHT = 1000, 500
 ROAD_WIDTH, ROAD_HEIGHT = 100, 200
@@ -167,6 +169,7 @@ def draw_level_one():
             main_menu()
 
         if check_car_in_parking_space(car, 778, 860, 80, 5):
+            timer(False)
             draw_level_two()
 
         for event in pygame.event.get():
@@ -176,12 +179,20 @@ def draw_level_one():
 
         pygame.display.update()
 
+def timer(start):
+    if start:
+        start_time = pygame.time.get_ticks()
+    else:
+        end_time = pygame.time.get_ticks()
+        print(f"{start_time} - {end_time} = {start_time - end_time}")
+
 def main_menu():
     run = True
     while run:
         WIN.fill(SKY_BLUE)
-
+        
         if start_btn.draw(WIN):
+            timer(True)
             draw_level_one()
         if leader_btn.draw(WIN):
             draw_leader_board()
@@ -194,6 +205,7 @@ def main_menu():
                 run = False
         
         pygame.display.update()
+        clock.tick(60)
     pygame.quit()
     sys.exit()
 
