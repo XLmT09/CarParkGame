@@ -6,11 +6,9 @@ def scale_image(img, factor):
 
 class PlayerCar:
     def __init__(self, start_pos):
-        self.img = scale_image(pygame.image.load(os.path.join('assets', 'GreenCar.png')),0.08)
+        self.img = scale_image(pygame.image.load(os.path.join('assets', 'GreenCarw.jpg')),0.08)
         self.rect = self.img.get_rect()
-
         self.mask = pygame.mask.from_surface(self.img)
-
         self.max_vel = 4
         self.vel = 0
         self.rotation_vel = 4
