@@ -5,16 +5,10 @@ PARK_WIDTH, PARK_HEIGHT = 75, 150
 
 #Level one boundaries
 BACKGROUND_ONE = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Level1.png")), (WIDTH, HEIGHT))
-BOUNDARY_ONE = pygame.Rect(110, 0, 1, 500)
-BOUNDARY_TWO = pygame.Rect(250, 0, 1, 90)
-BOUNDARY_THREE = pygame.Rect(250, 202, 1, 300)
-BOUNDARY_FOUR = pygame.Rect(250, 202, 800, 1)
-BOUNDARY_FIVE = pygame.Rect(250, 90, 525, 1)
-BOUNDARY_SIX = pygame.Rect(775, 0, 1, 90)
-BOUNDARY_SEVEN = pygame.Rect(865, 0, 1, 90)
-BOUNDARY_EIGHT = pygame.Rect(865, 90, 100, 1)
 
-lvl1_boundaries = [BOUNDARY_ONE, BOUNDARY_TWO, BOUNDARY_THREE, BOUNDARY_FOUR, BOUNDARY_FIVE, BOUNDARY_SIX, BOUNDARY_SEVEN, BOUNDARY_EIGHT]
+lvl1_boundaries = [pygame.Rect(110, 0, 1, 500), pygame.Rect(250, 0, 1, 90), pygame.Rect(250, 202, 1, 300),
+                    pygame.Rect(250, 202, 800, 1), pygame.Rect(250, 90, 525, 1), pygame.Rect(775, 0, 1, 90),
+                    pygame.Rect(865, 0, 1, 90), pygame.Rect(865, 90, 100, 1)]
 
 #Level 2 boundaries
 BOUNDARY_ONE_TWO = pygame.Rect(200, HEIGHT - ROAD_HEIGHT, ROAD_HEIGHT * 3, 1)

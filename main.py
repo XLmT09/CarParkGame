@@ -1,8 +1,10 @@
-import pygame, os, button, objects, sys, carMechanics
+import pygame, os, button, objects, sys, carMechanics, time
 
 pygame.init()
 clock = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 100)
+leader_title_font = pygame.font.Font('freesansbold.ttf', 50)
+leader_small_font = pygame.font.Font('freesansbold.ttf', 20)
 
 WIDTH, HEIGHT = 1000, 500
 ROAD_WIDTH, ROAD_HEIGHT = 100, 200
@@ -16,6 +18,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+SKY_BLUE = (153, 204, 255)
 
 #getting images for game
 BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "grass.jpg")), 
@@ -34,12 +37,16 @@ START_IMG = pygame.image.load("assets\start.png").convert_alpha()
 QUIT_IMG = pygame.image.load("assets\quit.png").convert_alpha()
 QUIT2_IMG = pygame.image.load("assets\quit2.png").convert_alpha()
 RESET_IMG = pygame.image.load("assets/reset.png").convert_alpha()
+LEADER_IMG = pygame.image.load("assets/leaderboard.png").convert_alpha()
+MENU_IMG = pygame.image.load("assets/menu.png").convert_alpha()
 #Creating button objects
-start_btn = button.Button(375, 100, START_IMG, 1)
-quit_btn = button.Button(375, 250, QUIT_IMG, 1)
+start_btn = button.Button(375, 50, START_IMG, 1)
+quit_btn = button.Button(375, 350, QUIT_IMG, 1)
 quit_btn_lose_screen = button.Button(250, 300, QUIT_IMG, 1)
 quit2_btn = button.Button(0, 0, QUIT2_IMG, 0.05)
 reset_btn = button.Button(550, 300, RESET_IMG, 1)
+leader_btn = button.Button(375, 200, LEADER_IMG, 1)
+menu_btn = button.Button(550, 300, MENU_IMG, 1)
 
 def check_car_in_parking_space(car, left, right, bottom, top):
     #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top}")
@@ -64,6 +71,39 @@ def end_screen(did_user_win):
 
         if reset_btn.draw(WIN):
             draw_level_one()
+        if quit_btn_lose_screen.draw(WIN):
+            pygame.quit()
+            sys.exit()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        pygame.display.update()
+
+def display_leader_board_text():
+    y_pos = 50
+    loop = 1
+    with open("leaderboard.txt") as f:
+        for line in f:
+            splitStr = line.split()
+            personStr = f"{loop}.) {splitStr[0]} {splitStr[1]}"
+            txt = leader_small_font.render(personStr, True, BLACK, SKY_BLUE)
+            WIN.blit(txt, (0, y_pos))
+            y_pos += 30
+            loop += 1
+
+def draw_leader_board():
+    text = leader_title_font.render('Leaderboard', True, BLACK, SKY_BLUE)
+    while True:
+        WIN.fill(SKY_BLUE)
+        WIN.blit(text, (0,0))
+
+        display_leader_board_text()
+
+        if menu_btn.draw(WIN):
+            main_menu()
         if quit_btn_lose_screen.draw(WIN):
             pygame.quit()
             sys.exit()
@@ -139,12 +179,15 @@ def draw_level_one():
 def main_menu():
     run = True
     while run:
-        WIN.fill((153, 204, 255))
+        WIN.fill(SKY_BLUE)
 
         if start_btn.draw(WIN):
             draw_level_one()
+        if leader_btn.draw(WIN):
+            draw_leader_board()
         if quit_btn.draw(WIN):
             run = False
+        
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
