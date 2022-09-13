@@ -21,6 +21,7 @@ GREEN = (0, 255, 0)
 
 
 #getting images for game
+BACKGROUND_ONE = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Level1.png")).convert(), (WIDTH, HEIGHT))
 BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "grass.jpg")), 
     (WIDTH, HEIGHT))
 
@@ -113,14 +114,13 @@ def draw_level_one():
     car = carMechanics.PlayerCar((150, 400))   
     while True:
         clock.tick(FPS)
-        WIN.blit(objects.BACKGROUND_ONE, (0, 0))
+        WIN.blit(BACKGROUND_ONE, (0, 0))
         WIN.blit(objects.BACKGROUND_ONE_OUTLINE, (0, 0))
 
         #draw car
         car.move_player(WIN)
         
          
-        
         if car.collide(objects.BACKGROUND_ONE_MASK) !=None:
             end_screen(False)
 

@@ -4,7 +4,6 @@ ROAD_WIDTH, ROAD_HEIGHT = 100, 200
 PARK_WIDTH, PARK_HEIGHT = 75, 150
 
 #Level one boundaries
-BACKGROUND_ONE = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Level1.png")), (WIDTH, HEIGHT))
 BACKGROUND_ONE_OUTLINE =  pygame.transform.scale(pygame.image.load(os.path.join("Assets", 'OutlineLevel1.png')), (WIDTH, HEIGHT))
 BACKGROUND_ONE_MASK = pygame.mask.from_surface(BACKGROUND_ONE_OUTLINE)
 
