@@ -5,6 +5,10 @@ PARK_WIDTH, PARK_HEIGHT = 75, 150
 
 #Level one boundaries
 BACKGROUND_ONE = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Level1.png")), (WIDTH, HEIGHT))
+BACKGROUND_ONE_OUTLINE =  pygame.transform.scale(pygame.image.load(os.path.join("Assets", 'OutlineLevel1.png')), (WIDTH, HEIGHT))
+BACKGROUND_ONE_MASK = pygame.mask.from_surface(BACKGROUND_ONE_OUTLINE)
+
+
 BOUNDARY_ONE = pygame.Rect(110, 0, 1, 500)
 BOUNDARY_TWO = pygame.Rect(250, 0, 1, 90)
 BOUNDARY_THREE = pygame.Rect(250, 202, 1, 300)

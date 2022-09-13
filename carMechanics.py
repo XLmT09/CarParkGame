@@ -1,8 +1,12 @@
 import pygame, math, os
 
+
+
+
 def scale_image(img, factor):
     size = round(img.get_width() * factor), round(img.get_height() * factor)
     return pygame.transform.scale(img, size)
+
 
 class PlayerCar:
     def __init__(self, start_pos):
@@ -38,6 +42,7 @@ class PlayerCar:
         offset = (int(self.x-x),int(self.y-y))
         collisionIntersect = mask.overlap(car_mask, offset)
         return collisionIntersect
+        
     def move_player(self, win):
         self.draw(win)
         keys = pygame.key.get_pressed()
