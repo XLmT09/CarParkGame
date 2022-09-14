@@ -82,6 +82,8 @@ def end_screen(did_user_win):
         time_text_render = end_font_small.render(time_text, True, WHITE, GREEN)
         back_col = GREEN
 
+    times.clear()
+
     while True:
         WIN.fill(back_col)
         if (did_user_win):
@@ -94,8 +96,11 @@ def end_screen(did_user_win):
             text_surface = end_font_small.render(user_text, True, WHITE)
             WIN.blit(text_surface, (user_rect.x + 5, user_rect.y + 5))
             if sub_btn.draw(WIN):
-                f = open("leaderboard.txt", "a")
-                f.write(f"{user_text} {total_time}\n")
+                f = open("scoreboard.txt", "a")
+                if user_text == "":
+                    f.write(f"Anon {total_time} \n")
+                else:
+                    f.write(f"{user_text} {total_time} \n")
                 f.close()
                 user_text = "Submmited!"
         else:
@@ -129,6 +134,15 @@ def end_screen(did_user_win):
 def display_leader_board_text():
     y_pos = 50
     loop = 1
+
+    lines = open("scoreboard.txt", 'r').readlines()
+    output = open("leaderboard.txt", 'w')
+
+    for line in sorted(lines, key=lambda line: line.split()[1]):
+        output.write(line)
+    
+    output.close()
+
     with open("leaderboard.txt") as f:
         for line in f:
             splitStr = line.split()
@@ -139,7 +153,7 @@ def display_leader_board_text():
             loop += 1
 
 def draw_leader_board():
-    text = leader_title_font.render('Leaderboard', True, BLACK, SKY_BLUE)
+    text = leader_title_font.render('Leaderboard (Top 15)', True, BLACK, SKY_BLUE)
     while True:
         WIN.fill(SKY_BLUE)
         WIN.blit(text, (0,0))
@@ -244,4 +258,4 @@ def main_menu():
     sys.exit()
 
 if __name__ == "__main__":
-    end_screen(True)
+    main_menu()
