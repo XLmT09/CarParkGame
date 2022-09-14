@@ -1,12 +1,12 @@
-import pygame, os, button, objects, sys, carMechanics
+import pygame, os, button, objects, sys, carMechanics, time
 
 pygame.init()
 clock = pygame.time.Clock()
-font = pygame.font.Font('freesansbold.ttf', 100)
+end_font = pygame.font.Font('freesansbold.ttf', 50)
+end_font_small = pygame.font.Font('freesansbold.ttf',40)
 leader_title_font = pygame.font.Font('freesansbold.ttf', 50)
 leader_small_font = pygame.font.Font('freesansbold.ttf', 20)
-start_time = 0
-end_time = 0
+times = []
 
 WIDTH, HEIGHT = 1000, 500
 ROAD_WIDTH, ROAD_HEIGHT = 100, 200
@@ -45,6 +45,7 @@ QUIT2_IMG = pygame.image.load("assets\quit2.png").convert_alpha()
 RESET_IMG = pygame.image.load("assets/reset.png").convert_alpha()
 LEADER_IMG = pygame.image.load("assets/leaderboard.png").convert_alpha()
 MENU_IMG = pygame.image.load("assets/menu.png").convert_alpha()
+SUB_IMG = pygame.image.load("assets/submit.png").convert_alpha()
 #Creating button objects
 start_btn = button.Button(375, 50, START_IMG, 1)
 quit_btn = button.Button(375, 350, QUIT_IMG, 1)
@@ -53,27 +54,52 @@ quit2_btn = button.Button(0, 0, QUIT2_IMG, 0.05)
 reset_btn = button.Button(550, 300, RESET_IMG, 1)
 leader_btn = button.Button(375, 200, LEADER_IMG, 1)
 menu_btn = button.Button(550, 300, MENU_IMG, 1)
+sub_btn = button.Button(750, 170, SUB_IMG, 1)
 
 def check_car_in_parking_space(car, left, right, bottom, top):
     #print(f"car: {car.rect.left, car.rect.right, car.rect.bottom, car.rect.top}")
     if car.rect.left > left and car.rect.right < right and car.rect.bottom < bottom and car.rect.top > top:
         return True    
-            
+    
 
 def end_screen(did_user_win):
+    active = False
+    user_text = ""
+    user_rect = pygame.Rect(300, 190, 400, 50)
+    #caculate time to complete in secondds
+    total_time = 0
+    for time in times:
+        total_time += time
+    total_time = round(total_time, 2)
+
     #creating text object
     if did_user_win == False:
-        text = font.render('Game Over', True, WHITE, RED)
+        text = end_font.render('Game Over', True, WHITE, RED)
         back_col = RED
     else:
-        text = font.render('Game Complete!', True, WHITE, GREEN)
+        text = end_font.render('Game Complete!', True, WHITE, GREEN)
+        time_text = f"Time: {total_time}s"
+        time_text_render = end_font_small.render(time_text, True, WHITE, GREEN)
         back_col = GREEN
-    textRect = text.get_rect()
-    textRect.center = (WIDTH // 2, HEIGHT // 3)
 
     while True:
         WIN.fill(back_col)
-        WIN.blit(text, textRect)
+        if (did_user_win):
+            WIN.blit(text, (300, 50))
+            WIN.blit(time_text_render, (10, 200))
+            if active:
+                pygame.draw.rect(WIN, SKY_BLUE, user_rect, 2)
+            else:
+                pygame.draw.rect(WIN, WHITE, user_rect, 2)
+            text_surface = end_font_small.render(user_text, True, WHITE)
+            WIN.blit(text_surface, (user_rect.x + 5, user_rect.y + 5))
+            if sub_btn.draw(WIN):
+                f = open("leaderboard.txt", "a")
+                f.write(f"{user_text} {total_time}\n")
+                f.close()
+                user_text = "Submmited!"
+        else:
+            WIN.blit(text, (350, 50))
 
         if reset_btn.draw(WIN):
             draw_level_one()
@@ -85,6 +111,18 @@ def end_screen(did_user_win):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if user_rect.collidepoint(event.pos):
+                    active = True
+                else:
+                    active = False
+            if active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]
+                    else:
+                        user_text += event.unicode
         
         pygame.display.update()
 
@@ -124,7 +162,7 @@ def draw_leader_board():
 def draw_level_two():
     #Creating car object
     car = carMechanics.PlayerCar((235, 75))
-    
+    start = time.time()
     while True:
         clock.tick(FPS)
         WIN.blit(BACKGROUND, (0, 0))
@@ -133,15 +171,15 @@ def draw_level_two():
         p = pygame.Rect(725, HEIGHT - ROAD_WIDTH - ROAD_HEIGHT - PARK_HEIGHT, PARK_WIDTH, PARK_HEIGHT)
         WIN.blit(PARK_VERTICAL, (p.x, p.y))
 
-       
-         
         #draw car
         car.move_player(WIN)
 
         if quit2_btn.draw(WIN):
+            times.clear()
             main_menu()
 
         if check_car_in_parking_space(car, 725, 800, 200, 50):
+            times.append(time.time() - start)
             end_screen(True)
 
         for event in pygame.event.get():
@@ -153,7 +191,8 @@ def draw_level_two():
 
 def draw_level_one():
     #Creating car object
-    car = carMechanics.PlayerCar((150, 400))   
+    car = carMechanics.PlayerCar((150, 400))
+    start = time.time()   
     while True:
         clock.tick(FPS)
         WIN.blit(BACKGROUND_ONE, (0, 0))
@@ -164,13 +203,15 @@ def draw_level_one():
         
          
         if car.collide(objects.BACKGROUND_ONE_MASK) !=None:
+            times.clear()
             end_screen(False)
 
         if quit2_btn.draw(WIN):
+            times.clear()
             main_menu()
 
         if check_car_in_parking_space(car, 778, 860, 80, 5):
-            timer(False)
+            times.append(time.time() - start)
             draw_level_two()
 
         for event in pygame.event.get():
@@ -180,20 +221,12 @@ def draw_level_one():
 
         pygame.display.update()
 
-def timer(start):
-    if start:
-        start_time = pygame.time.get_ticks()
-    else:
-        end_time = pygame.time.get_ticks()
-        print(f"{start_time} - {end_time} = {start_time - end_time}")
-
 def main_menu():
     run = True
     while run:
         WIN.fill(SKY_BLUE)
         
         if start_btn.draw(WIN):
-            timer(True)
             draw_level_one()
         if leader_btn.draw(WIN):
             draw_leader_board()
@@ -211,4 +244,4 @@ def main_menu():
     sys.exit()
 
 if __name__ == "__main__":
-    main_menu()
+    end_screen(True)
