@@ -207,7 +207,6 @@ def draw_level_two():
         car.move_player(WIN)
 
         if quit2_btn.draw(WIN):
-            times.clear()
             main_menu()
 
         if check_car_in_parking_space(car, 725, 800, 200, 50):
@@ -236,10 +235,9 @@ def draw_level_one():
          
         if car.collide(objects.BACKGROUND_ONE_MASK) !=None:
             times.clear()
-            lose_screen
+            lose_screen()
 
         if quit2_btn.draw(WIN):
-            times.clear()
             main_menu()
 
         if check_car_in_parking_space(car, 778, 860, 80, 5):
@@ -255,6 +253,7 @@ def draw_level_one():
 
 def main_menu():
     run = True
+    times.clear()
     while run:
         WIN.fill(SKY_BLUE)
         
