@@ -2,6 +2,7 @@ import pygame, os, button, objects, sys, carMechanics, time
 
 pygame.init()
 clock = pygame.time.Clock()
+end_font_lose = pygame.font.Font('freesansbold.ttf', 100)
 end_font = pygame.font.Font('freesansbold.ttf', 50)
 end_font_small = pygame.font.Font('freesansbold.ttf',40)
 leader_title_font = pygame.font.Font('freesansbold.ttf', 50)
@@ -61,8 +62,30 @@ def check_car_in_parking_space(car, left, right, bottom, top):
     if car.rect.left > left and car.rect.right < right and car.rect.bottom < bottom and car.rect.top > top:
         return True    
     
+def lose_screen():
+    #creating text object
+    text = end_font_lose.render('Game Over', True, WHITE, RED)
+    textRect = text.get_rect()
+    textRect.center = (WIDTH // 2, HEIGHT // 3)
 
-def end_screen(did_user_win):
+    while True:
+        WIN.fill(RED)
+        WIN.blit(text, textRect)
+
+        if reset_btn.draw(WIN):
+            draw_level_one()
+        if quit_btn_lose_screen.draw(WIN):
+            pygame.quit()
+            sys.exit()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        pygame.display.update()
+
+def win_screen():
     active = False
     user_text = ""
     user_rect = pygame.Rect(300, 190, 400, 50)
@@ -73,38 +96,33 @@ def end_screen(did_user_win):
     total_time = round(total_time, 2)
 
     #creating text object
-    if did_user_win == False:
-        text = end_font.render('Game Over', True, WHITE, RED)
-        back_col = RED
-    else:
-        text = end_font.render('Game Complete!', True, WHITE, GREEN)
-        time_text = f"Time: {total_time}s"
-        time_text_render = end_font_small.render(time_text, True, WHITE, GREEN)
-        back_col = GREEN
+    text = end_font.render('Game Complete!', True, WHITE, GREEN)
+    time_text = f"Time: {total_time}s"
+    time_text_render = end_font_small.render(time_text, True, WHITE, GREEN)
 
     times.clear()
 
     while True:
-        WIN.fill(back_col)
-        if (did_user_win):
-            WIN.blit(text, (300, 50))
-            WIN.blit(time_text_render, (10, 200))
-            if active:
-                pygame.draw.rect(WIN, SKY_BLUE, user_rect, 2)
-            else:
-                pygame.draw.rect(WIN, WHITE, user_rect, 2)
-            text_surface = end_font_small.render(user_text, True, WHITE)
-            WIN.blit(text_surface, (user_rect.x + 5, user_rect.y + 5))
-            if sub_btn.draw(WIN):
-                f = open("scoreboard.txt", "a")
-                if user_text == "":
-                    f.write(f"Anon {total_time} \n")
-                else:
-                    f.write(f"{user_text} {total_time} \n")
-                f.close()
-                user_text = "Submmited!"
+        WIN.fill(GREEN)
+        WIN.blit(text, (300, 50))
+        WIN.blit(time_text_render, (10, 200))
+
+        if active:
+            pygame.draw.rect(WIN, SKY_BLUE, user_rect, 2)
         else:
-            WIN.blit(text, (350, 50))
+            pygame.draw.rect(WIN, WHITE, user_rect, 2)
+        
+        text_surface = end_font_small.render(user_text, True, WHITE)
+        WIN.blit(text_surface, (user_rect.x + 5, user_rect.y + 5))
+
+        if sub_btn.draw(WIN):
+            f = open("scoreboard.txt", "a")
+            if user_text == "":
+                f.write(f"Anon {total_time} \n")
+            else:
+                f.write(f"{user_text} {total_time} \n")
+            f.close()
+            user_text = "Submmited!"
 
         if reset_btn.draw(WIN):
             draw_level_one()
@@ -194,7 +212,7 @@ def draw_level_two():
 
         if check_car_in_parking_space(car, 725, 800, 200, 50):
             times.append(time.time() - start)
-            end_screen(True)
+            win_screen()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -218,7 +236,7 @@ def draw_level_one():
          
         if car.collide(objects.BACKGROUND_ONE_MASK) !=None:
             times.clear()
-            end_screen(False)
+            lose_screen
 
         if quit2_btn.draw(WIN):
             times.clear()
